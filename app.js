@@ -6,6 +6,10 @@ var express = require('express');
 var app = express();
 var port = 3000;
 
+//jas reikia iskoduoti is form body...
+var bodyParser = require('body-parser');
+
+
 
 
 
@@ -14,6 +18,9 @@ app.set('view engine', 'ejs');
 
 //leidziame applikacijai rodyti failus esancius public folderyje;
 app.use(express.static('public'));
+
+//kad gautu duomenys is formu html
+app.use(bodyParser.urlencoded({ extended: false }));
 
 //serverio paleidimas
 app.listen(port, function(){ console.log('Server is running on http://localhost:'+ port)});
@@ -42,6 +49,28 @@ app.get('/product/:id', (req, res) => {
 app.get('/cart', (req, res) => {
     res.render('cart');
 })
+
+
+app.get('/create', (req, res) => {
+    res.render('create');
+})
+
+
+app.post('/create', (req, res) => {
+    let newProduct = req.body;
+
+    let productsFromDB = fs.readFileSync('./database/products.json');
+    let products = JSON.parse(productsFromDB);
+
+    products.push(newProduct);
+
+    fs.writeFileSync('./database/products.json', JSON.stringify(products));
+
+    res.redirect('/');
+
+
+})
+
 
 
 
